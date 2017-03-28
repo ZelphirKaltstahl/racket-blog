@@ -12,12 +12,22 @@
 ;; =====
 ;; STATE
 ;; =====
-(define (get-vocabulary-for-topic topic)
-  ;; for now always returns the same
+(define VOCABULARY-POLITICS
   (list
     (list "sich fuer eine Person entscheiden" "xuǎnzé" "32" "选择")
     (list "teilnehmen" "cānyù" "14" "参与")
     (list "die Wahl" "dàxuǎn" "43" "大选")))
+(define VOCABULARY-OTHER
+  (list
+    (list "a" "b" "c" "d")
+    (list "e" "f" "g" "h")))
+(define VOCABULARY
+  (hash
+    "politics" VOCABULARY-POLITICS
+    "other" VOCABULARY-OTHER))
+
+(define (get-vocabulary-for-topic topic)
+  (hash-ref VOCABULARY topic))
 
 ;; ======================
 ;; APPS HANDLING REQUESTS
@@ -34,8 +44,8 @@
   (response/xexpr
     `(html
        (head (title "Vocabulary Overview")
-             (link ((rel "stylesheet") (href "css/general.css") (type "text/css"))))
-       (body (p "This is an overview of vocabulary pages.")))))
+             (link ((rel "stylesheet") (href "/css/general.css") (type "text/css"))))
+       (body (p "This is an overview of vocabulary pages.")))))  ; TODO: how to get a list of available vocabulary subpages?
 
 (define (overview-app request)
   (response/full
@@ -47,15 +57,14 @@
 ;; ===============
 ;; RENDERING STUFF
 ;; ===============
-
 (define (render-vocabulary-page topic)
   (let
     ([vocabulary (get-vocabulary-for-topic topic)])
     (let
-      ([content (render-vocabulary-table vocabulary)]
+      ([content (render-vocabulary-table vocabulary topic)]
         [page-title "Vocabulary"]
         [special-css-imports
-          (render-css-include "css/vocabulary-table.css")]
+          (render-css-include "/css/vocabulary-table.css")]
         [special-js-imports ""]
         [header ""]
         [footer ""]
@@ -63,9 +72,10 @@
       (include-template
         "templates/base.html"))))
 
-(define (render-vocabulary-table vocabulary)
+(define (render-vocabulary-table vocabulary topic)
   (let
-    ([table-headers (list "German" "Pinyin" "Tones" "Chinese")]
+    ([topic topic]
+      [table-headers (list "German" "Pinyin" "Tones" "Chinese")]
       [word-list vocabulary])
     (include-template "templates/vocabulary-table.html")))
 
@@ -73,7 +83,7 @@
   (let
     ([content
        (let
-         ([subpage-titles (list "vocabulary")])
+         ([subpage-titles (list "vocabulary")])  ; TODO: how to dynamically get a list of subpages?
          (include-template "templates/overview.html"))]
       [page-title "Overview"]
       [special-css-imports ""]
