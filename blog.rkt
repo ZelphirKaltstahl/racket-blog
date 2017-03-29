@@ -9,25 +9,69 @@
   web-server/servlet
   web-server/dispatch)
 
+(define nil '())
+
 ;; =====
 ;; STATE
 ;; =====
+(define (create-translation
+          first-language-translations
+          first-language-phonetics
+          second-language-translations
+          second-language-extra
+          second-language-phonetics)
+
+  (define (translation-concat translations divider result)
+    (let
+      ([parts (reverse translations)])
+      (cond
+        [(empty? parts) result]
+        [else
+          (translation-concat
+            (rest parts)
+            divider
+            (string-append (first parts) divider result))])))
+  (list
+    (translation-concat first-language-translations "<br>" "")
+    (translation-concat first-language-phonetics "<br>" "")
+    (translation-concat second-language-phonetics "<br>" "")
+    (translation-concat second-language-extra "<br>" "")
+    (translation-concat second-language-translations "<br>" "")))
+
+(define VOCABULARY-TOPICS
+  (list "other" "politics" "computer"))
+
 (define VOCABULARY-POLITICS
   (list
     (list "sich fuer eine Person entscheiden" "xuǎnzé" "32" "选择")
     (list "teilnehmen" "cānyù" "14" "参与")
     (list "die Wahl" "dàxuǎn" "43" "大选")))
+
 (define VOCABULARY-OTHER
   (list
     (list "a" "b" "c" "d")
     (list "e" "f" "g" "h")))
+
+(define VOCABULARY-COMPUTER
+  (list
+    (create-translation (list "die Webseite") (list "IPA") (list "wǎngzhàn") (list "34") (list "网站"))
+    (create-translation (list "die URL") (list "IPA") (list "wǎngzhàndìzhǐ") (list "3443") (list "网站地址"))
+    (create-translation (list "der Onlinekurs") (list "IPA") (list "wǎngkè") (list "34") (list "网课"))
+    (create-translation (list "der Kurs") (list "IPA") (list "kèchéng") (list "42") (list "课程"))
+    (create-translation (list "das Computerprogramm") (list "IPA") (list "chéngxù") (list "24") (list "程序"))
+    (create-translation (list "Data Science") (list "IPA") (list "shùjùkēxué") (list "4412") (list "数据科学"))
+    (create-translation (list "Machine Learning") (list "IPA") (list "???") (list "???") (list "???"))
+    (create-translation (list "Artificial Intelligence") (list "IPA") (list "???") (list "???") (list "???"))))
+
 (define VOCABULARY
   (hash
     "politics" VOCABULARY-POLITICS
+    "computer" VOCABULARY-COMPUTER
     "other" VOCABULARY-OTHER))
 
 (define (get-vocabulary-for-topic topic)
   (hash-ref VOCABULARY topic))
+;; IDEA: Tagged vocabulary: just define words with tags and lets them automatically be collected according to topics
 
 ;; ======================
 ;; APPS HANDLING REQUESTS
