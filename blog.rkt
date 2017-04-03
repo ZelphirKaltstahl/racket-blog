@@ -1,5 +1,16 @@
 #lang racket
 
+;; ==============
+;; PREDEFINITIONS
+;; ==============
+(define (Mb-to-B n) (* n 1024 1024))
+(define MAX-BYTES (Mb-to-B 64))
+(define nil '())
+(custodian-limit-memory (current-custodian) MAX-BYTES)
+
+;; =======================
+;; PROVIDING AND REQUIRING
+;; =======================
 (provide/contract
   (start (-> request? response?)))
 
@@ -7,136 +18,123 @@
   web-server/templates
   web-server/servlet-env
   web-server/servlet
-  web-server/dispatch)
-
-(define nil '())
-
-;; =====
-;; STATE
-;; =====
-(define (create-translation
-          first-language-translations
-          first-language-phonetics
-          second-language-translations
-          second-language-extra
-          second-language-phonetics)
-
-  (define (translation-concat translations divider result)
-    (let
-      ([parts (reverse translations)])
-      (cond
-        [(empty? parts) result]
-        [else
-          (translation-concat
-            (rest parts)
-            divider
-            (string-append (first parts) divider result))])))
-  (list
-    (translation-concat first-language-translations "<br>" "")
-    (translation-concat first-language-phonetics "<br>" "")
-    (translation-concat second-language-phonetics "<br>" "")
-    (translation-concat second-language-extra "<br>" "")
-    (translation-concat second-language-translations "<br>" "")))
-
-(define VOCABULARY-TOPICS
-  (list "other" "politics" "computer"))
-
-(define VOCABULARY-POLITICS
-  (list
-    (list "sich fuer eine Person entscheiden" "xuǎnzé" "32" "选择")
-    (list "teilnehmen" "cānyù" "14" "参与")
-    (list "die Wahl" "dàxuǎn" "43" "大选")))
-
-(define VOCABULARY-OTHER
-  (list
-    (list "a" "b" "c" "d")
-    (list "e" "f" "g" "h")))
-
-(define VOCABULARY-COMPUTER
-  (list
-    (create-translation (list "die Webseite") (list "IPA") (list "wǎngzhàn") (list "34") (list "网站"))
-    (create-translation (list "die URL") (list "IPA") (list "wǎngzhàndìzhǐ") (list "3443") (list "网站地址"))
-    (create-translation (list "der Onlinekurs") (list "IPA") (list "wǎngkè") (list "34") (list "网课"))
-    (create-translation (list "der Kurs") (list "IPA") (list "kèchéng") (list "42") (list "课程"))
-    (create-translation (list "das Computerprogramm") (list "IPA") (list "chéngxù") (list "24") (list "程序"))
-    (create-translation (list "Data Science") (list "IPA") (list "shùjùkēxué") (list "4412") (list "数据科学"))
-    (create-translation (list "Machine Learning") (list "IPA") (list "???") (list "???") (list "???"))
-    (create-translation (list "Artificial Intelligence") (list "IPA") (list "???") (list "???") (list "???"))))
-
-(define VOCABULARY
-  (hash
-    "politics" VOCABULARY-POLITICS
-    "computer" VOCABULARY-COMPUTER
-    "other" VOCABULARY-OTHER))
-
-(define (get-vocabulary-for-topic topic)
-  (hash-ref VOCABULARY topic))
-;; IDEA: Tagged vocabulary: just define words with tags and lets them automatically be collected according to topics
+  web-server/dispatch
+  racket/date
+  "tags.rkt"
+  "voc.rkt"
+  "homework.rkt")
 
 ;; ======================
 ;; APPS HANDLING REQUESTS
 ;; ======================
+(define (send-success-response rendered-page)
+  (response/full
+    200 #"OK"
+    (current-seconds) TEXT/HTML-MIME-TYPE
+    empty
+    (list (string->bytes/utf-8 rendered-page))))
+
+(define (homework-app request a-date-string)
+  (send-success-response
+    (render-homeworks-page a-date-string)))
+
+(define (homework-overview-app request)
+  (send-success-response (render-homeworks-overview-page)))
 
 (define (vocabulary-app request topic)
-  (response/full
-    200 #"OK"
-    (current-seconds) TEXT/HTML-MIME-TYPE
-    empty
-    (list (string->bytes/utf-8 (render-vocabulary-page topic)))))
-
-(define (vocabulary-overview-app request)
-  (response/xexpr
-    `(html
-       (head (title "Vocabulary Overview")
-             (link ((rel "stylesheet") (href "/css/general.css") (type "text/css"))))
-       (body (p "This is an overview of vocabulary pages.")))))  ; TODO: how to get a list of available vocabulary subpages?
+  (send-success-response
+    (render-vocabulary-page topic)))
 
 (define (overview-app request)
-  (response/full
-    200 #"OK"
-    (current-seconds) TEXT/HTML-MIME-TYPE
-    empty
-    (list (string->bytes/utf-8 (render-overview-page)))))
+  (send-success-response
+    (render-overview-page)))
+
+(define (vocabulary-overview-app request)
+  (send-success-response
+    (render-base-page
+      #:content (render-vocabulary-overview-page)
+      #:page-title "Vocabulary Overview")))
+
+(define (items-app request)
+  (response/xexpr
+    `(html
+       (head
+         (title "Vocabulary Overview")
+         (link ((rel "stylesheet") (href "/css/general.css") (type "text/css"))))
+       (body
+         (p "This is an overview of vocabulary tags.")
+         ))))  ; TODO: how to get a list of available vocabulary subpages?
 
 ;; ===============
 ;; RENDERING STUFF
 ;; ===============
+;; TODO: Get this one working
+;; (define render-template
+;;   (make-keyword-procedure
+;;     (lambda (keywords keyword-args template)
+;;       ())))
+
+(define (render-base-page
+          #:content [content ""]
+          #:page-title [page-title "NO TITLE"]
+          #:special-css-imports [special-css-imports ""]
+          #:special-js-imports [special-js-imports ""]
+          #:header [header (include-template "templates/header.html")]
+          #:footer [footer (include-template "templates/footer.html")]
+          #:navigation [navigation ""])
+  (include-template "templates/base.html"))
+
+(define (render-homeworks-overview-page)
+  (let
+    ([dates
+       (sort
+         (get-all-homework-dates)
+         #:key my-date->string
+         string<?)])
+    (include-template "templates/homework-overview.html")))
+
+(define (render-homeworks-page a-date-string)
+  (let*
+    ([the-date (make-simple-date-from-iso-string a-date-string)]
+      [homeworks (get-homeworks-by-date the-date)])
+    (render-base-page
+      #:content (render-homeworks homeworks)
+      #:page-title (string-append "Homework due on " a-date-string))))
+
+(define (render-homeworks homeworks)
+  (string-join (map render-homework homeworks) ""))
+
+(define (render-homework homework)
+  (let
+    ([homework homework])
+    (include-template "templates/homework.html")))
+
+(define (render-vocabulary-overview-page)
+  (let
+    ([tags (set->list TAGS)])
+    (include-template "templates/vocabulary-overview.html")))
+
 (define (render-vocabulary-page topic)
   (let
-    ([vocabulary (get-vocabulary-for-topic topic)])
-    (let
-      ([content (render-vocabulary-table vocabulary topic)]
-        [page-title "Vocabulary"]
-        [special-css-imports
-          (render-css-include "/css/vocabulary-table.css")]
-        [special-js-imports ""]
-        [header ""]
-        [footer ""]
-        [navigation ""])
-      (include-template
-        "templates/base.html"))))
+    ([vocabulary (get-vocabulary-by-tag topic)])
+    (render-base-page
+      #:content (render-vocabulary-table vocabulary topic)
+      #:page-title "Vocabulary"
+      #:special-css-imports (render-css-include "/css/vocabulary-table.css"))))
 
 (define (render-vocabulary-table vocabulary topic)
   (let
     ([topic topic]
-      [table-headers (list "German" "Pinyin" "Tones" "Chinese")]
+      [table-headers (list "German" "Pinyin" "Tones" "Chinese" "Description")]
       [word-list vocabulary])
     (include-template "templates/vocabulary-table.html")))
 
 (define (render-overview-page)
-  (let
-    ([content
-       (let
-         ([subpage-titles (list "vocabulary")])  ; TODO: how to dynamically get a list of subpages?
-         (include-template "templates/overview.html"))]
-      [page-title "Overview"]
-      [special-css-imports ""]
-      [special-js-imports ""]
-      [header ""]
-      [footer ""]
-      [navigation ""])
-    (include-template
-      "templates/base.html")))
+  (render-base-page
+    #:content (let
+                ([subpage-titles (list "vocabulary")])
+                (include-template "templates/overview.html"))
+    #:page-title "Overview"))
 
 (define (render-css-include path)
   (let
@@ -156,24 +154,21 @@
   (dispatch-rules
     [("index") overview-app]
     [("vocabulary") vocabulary-overview-app]
-    [("vocabulary" (string-arg)) vocabulary-app]))
+    [("vocabulary" (string-arg)) vocabulary-app]
+    [("homework") homework-overview-app]
+    [("homework" (string-arg)) homework-app]
+    [("items") items-app]))
 
 (define (respond-unknown-file req)
-  (let
-    ([content (include-template "templates/unknown-file.html")]
-      [page-title "unknown file"]
-      [special-css-imports ""]
-      [special-js-imports ""]
-      [header ""]
-      [footer ""]
-      [navigation ""])
-    (response/full
-      404 #"ERROR"
-      (current-seconds) TEXT/HTML-MIME-TYPE
-      empty
-      (list
-        (string->bytes/utf-8
-          (include-template "templates/base.html"))))))
+  (response/full
+    404 #"ERROR"
+    (current-seconds) TEXT/HTML-MIME-TYPE
+    empty
+    (list
+      (string->bytes/utf-8
+        (render-base-page
+          #:content (include-template "templates/unknown-route.html")
+          #:page-title "unknown route")))))
 
 ;; ===========================
 ;; ADDED FOR RUNNING A SERVLET

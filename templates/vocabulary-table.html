@@ -6,11 +6,13 @@
             <th>@|heading|</th>
             }
         </tr>
-        @in[word-with-translation word-list]{
+        @in[word word-list]{
         <tr>
-            @in[translation word-with-translation]{
-            <td>@|translation|</td>
-            }
+            <td>@|(word-first-language-translations (complex-word-word word))|</td>
+            <td>@|(word-first-language-phonetics (complex-word-word word))|</td>
+            <td>@|(word-second-language-phonetics (complex-word-word word))|</td>
+            <td>@|(word-second-language-translations (complex-word-word word))|</td>
+            <td>@|(get-description word)|</td>
         </tr>
         }
     </tbody>

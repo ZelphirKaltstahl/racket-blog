@@ -1,0 +1,11 @@
+<h1 class="homework-overview-h1">Homework Overview</h1>
+<p class="homework-overview-p">A list of all dates with due homework:</p>
+<ul class="homework-overview-dates-list">
+    @in[a-date dates]{
+    <li>
+        <a class="homework-date-link" href="/homework/@|(make-iso-string-from-date a-date)|">
+            @|(my-date->string a-date)|
+        </a>
+    </li>
+    }
+</ul>
