@@ -27,8 +27,24 @@
 ;; ======================
 ;; APPS HANDLING REQUESTS
 ;; ======================
+
+(define (make-response
+         #:code [code 200]
+         #:message [message #"OK"]
+         #:seconds [seconds (current-seconds)]
+         #:mime-type [mime-type TEXT/HTML-MIME-TYPE]
+         #:headers [headers (list (make-header #"Cache-Control" #"no-cache"))]
+         content)
+  (response/full code
+                 message
+                 seconds
+                 mime-type
+                 headers
+                 (list (string->bytes/utf-8 content))))
+
 (define (send-success-response rendered-page)
-  (response/full
+  (make-response rendered-page)
+  #;(response/full
     200 #"OK"
     (current-seconds) TEXT/HTML-MIME-TYPE
     empty
@@ -182,14 +198,33 @@
   (blog-dispatch request))
 
 (define-values (blog-dispatch blug-url)
-  (dispatch-rules [("") overview-app]
-                  [("index") overview-app]
-                  #;[(#rx"") overview-app]
-                  [("vocabulary") vocabulary-overview-app]
-                  [("vocabulary" (string-arg)) vocabulary-app]
-                  [("homework") homework-overview-app]
-                  [("homework" (string-arg)) homework-app]
-                  [("items") items-app]))
+  (dispatch-rules [("")
+                   #:method "get"
+                   overview-app]
+
+                  [("index")
+                   #:method "get"
+                   overview-app]
+
+                  [("vocabulary")
+                   #:method "get"
+                   vocabulary-overview-app]
+
+                  [("vocabulary" (string-arg))
+                   #:method "get"
+                   vocabulary-app]
+
+                  [("homework")
+                   #:method "get"
+                   homework-overview-app]
+
+                  [("homework" (string-arg))
+                   #:method "get"
+                   homework-app]
+
+                  [("items")
+                   #:method "get"
+                   items-app]))
 
 (define (respond-unknown-file req)
   (response/full
