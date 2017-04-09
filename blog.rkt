@@ -4,7 +4,7 @@
 ;; PREDEFINITIONS
 ;; ==============
 (define (Mb-to-B n) (* n 1024 1024))
-(define MAX-BYTES (Mb-to-B 64))
+(define MAX-BYTES (Mb-to-B 128))
 (define nil '())
 (custodian-limit-memory (current-custodian) MAX-BYTES)
 
@@ -117,14 +117,12 @@
   (include-template "htdocs/templates/base.html"))
 
 (define (render-homeworks-overview-page)
-  (let
-    ([dates
-       (sort
-         (get-all-homework-dates)
-         #:key my-date->string
-         string<?)])
-   (include-template "htdocs/templates/homework-overview.html")
-   #;(render-template "htdocs/templates/base.html" #:dates dates)))
+  (render-base-page
+   #:page-title "Homeworks Overview"
+   #:content (let ([dates (sort (get-all-homework-dates)
+                                #:key my-date->string
+                                string<?)])
+               (include-template "htdocs/templates/homework-overview.html"))))
 
 (define (render-homeworks-page a-date-string)
   (let*
@@ -184,13 +182,14 @@
   (blog-dispatch request))
 
 (define-values (blog-dispatch blug-url)
-  (dispatch-rules
-    [("index") overview-app]
-    [("vocabulary") vocabulary-overview-app]
-    [("vocabulary" (string-arg)) vocabulary-app]
-    [("homework") homework-overview-app]
-    [("homework" (string-arg)) homework-app]
-    [("items") items-app]))
+  (dispatch-rules [("") overview-app]
+                  [("index") overview-app]
+                  #;[(#rx"") overview-app]
+                  [("vocabulary") vocabulary-overview-app]
+                  [("vocabulary" (string-arg)) vocabulary-app]
+                  [("homework") homework-overview-app]
+                  [("homework" (string-arg)) homework-app]
+                  [("items") items-app]))
 
 (define (respond-unknown-file req)
   (response/full
@@ -217,3 +216,7 @@
   #:listen-ip false  ; the server will listen on ALL available IP addresses, not only on one specified
   #:server-root-path (current-directory)
   #:file-not-found-responder respond-unknown-file)
+
+;; from the Racket documentation:
+;; When you use web-server/dispatch with serve/servlet, you almost always want to use the #:servlet-regexp argument with the value "" to capture all top-level requests. However, make sure you don’t include an else in your rules if you are also serving static files, or else the filesystem server will never see the requests.
+;; https://docs.racket-lang.org/web-server/dispatch.html

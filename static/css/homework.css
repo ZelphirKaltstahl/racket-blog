@@ -1,3 +1,20 @@
 p.homework-task-description {
     font-style: italic;
 }
+
+span.homework-in-text-heading-1 {
+    font-weight: bold;
+    font-size: 1.4em;
+}
+
+.homework-original {
+    color: #A0A0A0;
+}
+.homework-corrected {
+    color: #000000;
+}
+
+section.homework-section p {
+    max-width: 50em;
+    text-align: justify;
+}

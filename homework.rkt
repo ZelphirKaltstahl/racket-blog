@@ -1,17 +1,7 @@
 #lang racket
 
-(provide
-  get-homeworks-by-tag
-  get-homeworks-by-date
-  my-date->string
-  make-simple-date-from-iso-string
-  make-iso-string-from-date
-  get-all-homework-dates
-  get-native-translation
-  get-native-phonetics
-  get-foreign-phonetics
-  get-foreign-translation
-  format-text-with-newlines-to-html)
+(provide (all-defined-out))
+
 (require
   racket/set
   racket/date
@@ -58,29 +48,40 @@
             (simple-date-equal? (get-due-date-from-homework a-homework) a-date))
           (get-all-homeworks #:reload true)))
 
+;; =================
+;; ATTRIBUTE GETTERS
+;; =================
+(define (get-attribute-from-homework a-hash . keys)
+  (cond
+    [(empty? keys) a-hash]
+    [else
+     (apply get-attribute-from-homework
+            (hash-ref a-hash (first keys))
+            (rest keys))]))
+
 (define (get-native-translation homework)
-  (hash-ref
-   (hash-ref
-    (hash-ref homework
-              "content") "text") "native-translation" "none"))
+  (get-attribute-from-homework homework "content" "text" "native-translation"))
+
+(define (get-native-translation-corrected homework)
+  (get-attribute-from-homework homework "content" "corrected-text" "native-translation"))
 
 (define (get-foreign-translation homework)
-  (hash-ref
-   (hash-ref
-    (hash-ref homework
-              "content") "text") "foreign-translation" "none"))
+  (get-attribute-from-homework homework "content" "text" "foreign-translation"))
+
+(define (get-foreign-translation-corrected homework)
+  (get-attribute-from-homework homework "content" "corrected-text" "foreign-translation"))
 
 (define (get-native-phonetics homework)
-  (hash-ref
-   (hash-ref
-    (hash-ref homework
-              "content") "text") "native-phonetics" "none"))
+  (get-attribute-from-homework homework "content" "text" "native-phonetics"))
+
+(define (get-native-phonetics-corrected homework)
+  (get-attribute-from-homework homework "content" "corrected-text" "native-phonetics"))
 
 (define (get-foreign-phonetics homework)
-  (hash-ref
-   (hash-ref
-    (hash-ref homework
-              "content") "text") "foreign-phonetics" "none"))
+  (get-attribute-from-homework homework "content" "text" "foreign-phonetics"))
+
+(define (get-foreign-phonetics-corrected homework)
+  (get-attribute-from-homework homework "content" "corrected-text" "foreign-phonetics"))
 
 ;; =================
 ;; READING THE FILES

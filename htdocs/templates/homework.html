@@ -1,16 +1,41 @@
 <section class="homework-section">
-    <h1>Homework (@|(my-date->string (hash-ref (hash-ref homework "metadata") "due-date" "unscheduled"))|)</h1>
-    <p class="homework-task-description">Task: @|(hash-ref (hash-ref homework "metadata") "task-description" "no task description")|</p>
-    <p class="homework-foreign-language-translation">
+    <h1>Homework (@|(my-date->string (get-attribute-from-homework homework "metadata" "due-date"))|)</h1>
+    <h2>Task</h2>
+    <p class="homework-task-description">
+        @|(hash-ref (hash-ref homework "metadata") "task-description" "no task description")|
+    </p>
+    <h2 class="">Corrected Version</h2>
+    <h3 class="homework-corrected">Foreign Language Translation</h3>
+    <p class="homework-foreign-language-translation homework-corrected">
+        @|(format-text-with-newlines-to-html (get-foreign-translation-corrected homework))|
+    </p>
+    <h3 class="homework-corrected">Foreign Language Phonetics</h3>
+    <p class="homework-foreign-language-phonetics homework-corrected">
+        @|(format-text-with-newlines-to-html (get-foreign-phonetics-corrected homework))|
+    </p>
+    <h3 class="homework-corrected">Native Language Translation</h3>
+    <p class="homework-native-phonetics homework-corrected">
+        @|(format-text-with-newlines-to-html (get-native-phonetics-corrected homework))|
+    </p>
+    <h3 class="homework-corrected">Native Language Phonetics</h3>
+    <p class="homework-native-language-translation homework-corrected">
+        @|(format-text-with-newlines-to-html (get-native-translation-corrected homework))|
+    </p>
+    <h2 class="">Original Version</h2>
+    <h3 class="homework-original">Foreign Language Translation</h3>
+    <p class="homework-foreign-language-translation homework-original">
         @|(format-text-with-newlines-to-html (get-foreign-translation homework))|
     </p>
-    <p class="homework-foreign-language-phonetics">
+    <h3 class="homework-original">Foreign Language Phonetics</h3>
+    <p class="homework-foreign-language-phonetics homework-original">
         @|(format-text-with-newlines-to-html (get-foreign-phonetics homework))|
     </p>
-    <p class="homework-native-phonetics">
+    <h3 class="homework-original">Native Language Translation</h3>
+    <p class="homework-native-phonetics homework-original">
         @|(format-text-with-newlines-to-html (get-native-phonetics homework))|
     </p>
-    <p class="homework-native-language-translation">
+    <h3 class="homework-original">Native Language Phonetics</h3>
+    <p class="homework-native-language-translation homework-original">
         @|(format-text-with-newlines-to-html (get-native-translation homework))|
     </p>
 </section>
