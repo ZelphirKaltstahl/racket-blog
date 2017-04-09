@@ -14,20 +14,19 @@
 (provide/contract
   (start (-> request? response?)))
 
-(require
-  web-server/templates
-  web-server/servlet-env
-  web-server/servlet
-  web-server/dispatch
-  racket/date
-  "tags.rkt"
-  "vocabulary-app.rkt"
-  "overview-app.rkt"
-  "homework-app.rkt"
-  "items-app.rkt"
-  "response.rkt"
-  "render-base.rkt"
-  "homework.rkt")
+(require web-server/templates
+         web-server/servlet-env
+         web-server/servlet
+         web-server/dispatch
+         racket/date
+         "tags.rkt"
+         "vocabulary-app.rkt"
+         "overview-app.rkt"
+         "homework-app.rkt"
+         "items-app.rkt"
+         "response.rkt"
+         "render-base.rkt"
+         "homework.rkt")
 
 ;; ====================
 ;; ROUTES MANAGING CODE
