@@ -74,15 +74,47 @@
 ;;     (lambda (keywords keyword-args template)
 ;;       ())))
 
+;; (define render-template
+;;   (make-keyword-procedure
+;;     (lambda
+;;       (keywords keyword-args [content "<p>no content!</p>"] [template-path "template/base.html"])
+;;       (let
+;;         ([content content])
+;;         (include-template template-path)))))
+
+;; (define render-template
+;;  (make-keyword-procedure
+;;   (lambda ([path "htdocs/templates/base.html"]
+;;            #:content [content "<p>no content!</p>"]
+;;            #:dates [dates nil])
+;;    (eval
+;;     #`(let
+;;        ([content #,content]
+;;         [dates #,dates])
+;;        (include-template #,path))))))
+
+(define (dynamic-include-template path)
+  (eval #`(include-template #,path)))
+
+(define render-template
+  (make-keyword-procedure
+   (lambda (kws kw-args [path "htdocs/templates/base.html"] [content "<p>no content!</p>"])
+     (for ([keyword kws]
+           [keyword-arg kw-args])
+       (namespace-set-variable-value!
+        (string->symbol (keyword->string keyword)) keyword-arg))
+     (namespace-set-variable-value! 'content content)
+     (dynamic-include-template path))))
+
 (define (render-base-page
           #:content [content ""]
           #:page-title [page-title "NO TITLE"]
           #:special-css-imports [special-css-imports ""]
           #:special-js-imports [special-js-imports ""]
-          #:header [header (include-template "templates/header.html")]
-          #:footer [footer (include-template "templates/footer.html")]
+          #:header [header (include-template "htdocs/templates/header.html")]
+          #:footer [footer (include-template "htdocs/templates/footer.html")]
           #:navigation [navigation ""])
-  (include-template "templates/base.html"))
+  (include-template "htdocs/templates/base.html"))
 
 (define (render-homeworks-overview-page)
   (let
@@ -91,15 +123,16 @@
          (get-all-homework-dates)
          #:key my-date->string
          string<?)])
-    (include-template "templates/homework-overview.html")))
+   (include-template "htdocs/templates/homework-overview.html")
+   #;(render-template "htdocs/templates/base.html" #:dates dates)))
 
 (define (render-homeworks-page a-date-string)
   (let*
     ([the-date (make-simple-date-from-iso-string a-date-string)]
       [homeworks (get-homeworks-by-date the-date)])
-    (render-base-page
-      #:content (render-homeworks homeworks)
-      #:page-title (string-append "Homework due on " a-date-string))))
+    (render-base-page #:content (render-homeworks homeworks)
+                      #:special-css-imports (render-css-include "/css/homework.css")
+                      #:page-title (string-append "Homework due on " a-date-string))))
 
 (define (render-homeworks homeworks)
   (string-join (map render-homework homeworks) ""))
@@ -107,12 +140,12 @@
 (define (render-homework homework)
   (let
     ([homework homework])
-    (include-template "templates/homework.html")))
+    (include-template "htdocs/templates/homework.html")))
 
 (define (render-vocabulary-overview-page)
   (let
     ([tags (set->list TAGS)])
-    (include-template "templates/vocabulary-overview.html")))
+    (include-template "htdocs/templates/vocabulary-overview.html")))
 
 (define (render-vocabulary-page topic)
   (let
@@ -127,19 +160,19 @@
     ([topic topic]
       [table-headers (list "German" "Pinyin" "Tones" "Chinese" "Description")]
       [word-list vocabulary])
-    (include-template "templates/vocabulary-table.html")))
+    (include-template "htdocs/templates/vocabulary-table.html")))
 
 (define (render-overview-page)
   (render-base-page
     #:content (let
-                ([subpage-titles (list "vocabulary")])
-                (include-template "templates/overview.html"))
+                ([subpage-titles (list "vocabulary" "homework")])
+                (include-template "htdocs/templates/overview.html"))
     #:page-title "Overview"))
 
 (define (render-css-include path)
   (let
     ([path path])
-    (include-template "templates/css-link.html")))
+    (include-template "htdocs/templates/css-link.html")))
 
 
 ;; ====================
@@ -167,7 +200,7 @@
     (list
       (string->bytes/utf-8
         (render-base-page
-          #:content (include-template "templates/unknown-route.html")
+          #:content (include-template "htdocs/templates/unknown-route.html")
           #:page-title "unknown route")))))
 
 ;; ===========================

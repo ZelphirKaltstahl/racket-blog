@@ -3,7 +3,9 @@
 <ul class="homework-overview-dates-list">
     @in[a-date dates]{
     <li>
-        <a class="homework-date-link" href="/homework/@|(make-iso-string-from-date a-date)|">
+        <a class="homework-date-link" href="/homework/@|
+                                            (first (string-split (my-date->string a-date) ","))
+                                            |">
             @|(my-date->string a-date)|
         </a>
     </li>

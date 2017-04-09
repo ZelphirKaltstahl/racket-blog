@@ -1,0 +1,16 @@
+<section class="homework-section">
+    <h1>Homework (@|(my-date->string (hash-ref (hash-ref homework "metadata") "due-date" "unscheduled"))|)</h1>
+    <p class="homework-task-description">Task: @|(hash-ref (hash-ref homework "metadata") "task-description" "no task description")|</p>
+    <p class="homework-foreign-language-translation">
+        @|(format-text-with-newlines-to-html (get-foreign-translation homework))|
+    </p>
+    <p class="homework-foreign-language-phonetics">
+        @|(format-text-with-newlines-to-html (get-foreign-phonetics homework))|
+    </p>
+    <p class="homework-native-phonetics">
+        @|(format-text-with-newlines-to-html (get-native-phonetics homework))|
+    </p>
+    <p class="homework-native-language-translation">
+        @|(format-text-with-newlines-to-html (get-native-translation homework))|
+    </p>
+</section>
