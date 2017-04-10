@@ -8,8 +8,10 @@
 
 
 (define (homework-app request a-date-string)
-  (send-success-response
-    (render-homeworks-page a-date-string)))
+  (let* ([the-date (make-simple-date-from-iso-string a-date-string)]
+         [homeworks (get-homeworks-by-date the-date)])
+    (send-success-response
+     (render-homeworks-page homeworks))))
 
 (define (homework-overview-app request)
   (send-success-response (render-homeworks-overview-page)))
@@ -25,13 +27,10 @@
                                 string<?)])
                (include-template "htdocs/templates/homework-overview.html"))))
 
-(define (render-homeworks-page a-date-string)
-  (let*
-    ([the-date (make-simple-date-from-iso-string a-date-string)]
-      [homeworks (get-homeworks-by-date the-date)])
-    (render-base-page #:content (render-homeworks homeworks)
-                      #:special-css-imports (render-css-include "/css/homework.css")
-                      #:page-title (string-append "Homework due on " a-date-string))))
+(define (render-homeworks-page homeworks)
+  (render-base-page #:content (render-homeworks homeworks)
+                    #:special-css-imports (render-css-include "/css/homework.css")
+                    #:page-title (string-append "Homework")))
 
 (define (render-homeworks homeworks)
   (string-join (map render-homework homeworks) ""))

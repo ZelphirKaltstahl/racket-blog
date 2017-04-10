@@ -61,17 +61,20 @@
                    #:method "get"
                    homework-app]
 
-                  [("items")
+                  [("tags")
+                   #:method "get"
+                   tags-overview-app]
+                  [("tags" (string-arg))
                    #:method "get"
                    items-app]))
 
 ;; This procedure is still here, because it belongs to the main functionality of the whole blog, to display a page, when something could not be found.
 (define (respond-unknown-file req)
-  (let ([rendered-page (render-base-page
-                        #:content (include-template "htdocs/templates/unknown-route.html")
-                        #:page-title "unknown route")])
+  (let ([rendered-page (render-base-page #:content (include-template "htdocs/templates/unknown-route.html")
+                                         #:page-title "unknown route")])
     (make-response #:code 404
-                   #"ERROR")))
+                   #:message #"ERROR"
+                   rendered-page)))
 
 ;; ===========================
 ;; ADDED FOR RUNNING A SERVLET
@@ -82,7 +85,7 @@
   #:extra-files-paths (list (build-path (current-directory) "static"))  ; directory for static files
   #:port 8000 ; the port on which the servlet is running
   #:servlet-regexp #rx""
-  #:launch-browser? true  ; should racket show the servlet running in a browser upon startup?
+  #:launch-browser? false  ; should racket show the servlet running in a browser upon startup?
   ;; #:quit? false  ; ???
   #:listen-ip false  ; the server will listen on ALL available IP addresses, not only on one specified
   #:server-root-path (current-directory)

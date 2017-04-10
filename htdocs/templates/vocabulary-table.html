@@ -1,17 +1,16 @@
-<p class="vocabulary-table-heading">@|topic| Vocabulary</p>
 <table class="vocable-table">
     <tbody>
         <tr>
-            @in[heading table-headers]{
+            @in[heading headings]{
             <th>@|heading|</th>
             }
         </tr>
-        @in[word word-list]{
+        @in[word vocabulary]{
         <tr>
-            <td>@|(word-first-language-translations (complex-word-word word))|</td>
-            <td>@|(word-first-language-phonetics (complex-word-word word))|</td>
-            <td>@|(word-second-language-phonetics (complex-word-word word))|</td>
-            <td>@|(word-second-language-translations (complex-word-word word))|</td>
+            <td>@|(word-native-translations (complex-word-word word))|</td>
+            <td>@|(word-native-phonetics (complex-word-word word))|</td>
+            <td>@|(word-foreign-phonetics (complex-word-word word))|</td>
+            <td>@|(word-foreign-translations (complex-word-word word))|</td>
             <td>@|(get-description word)|</td>
         </tr>
         }

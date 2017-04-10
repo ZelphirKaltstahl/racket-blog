@@ -19,10 +19,10 @@
 (define (get-all-homeworks #:reload [reload false])
   (read-homeworks-from-directory "content/homework/"))
 
-(define (get-all-tags #:reload [reload false])
+(define (get-all-homework-tags #:reload [reload false])
   (unique-items-list
-    (map get-tags-from-homework
-         (get-all-homeworks #:reload reload))))
+    (flatten (map get-tags-from-homework
+                  (get-all-homeworks #:reload reload)))))
 
 (define (get-due-date-from-homework homework)
   (hash-ref (hash-ref homework "metadata") "due-date" "no date"))
@@ -40,7 +40,7 @@
 
 (define (get-homeworks-by-tag a-tag)
   (filter (lambda (a-homework)
-            (member a-tag (get-tags-from-homework a-homework)))
+            (homework-has-tag? a-homework a-tag))
           (get-all-homeworks #:reload true)))
 
 (define (get-homeworks-by-date a-date)

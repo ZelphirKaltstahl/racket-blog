@@ -17,9 +17,9 @@
       #:content (render-vocabulary-overview-page)
       #:page-title "Vocabulary Overview")))
 
-(define (vocabulary-app request topic)
+(define (vocabulary-app request a-tag)
   (send-success-response
-    (render-vocabulary-page topic)))
+    (render-vocabulary-page a-tag)))
 
 ;; =========
 ;; RENDERING
@@ -29,17 +29,15 @@
     ([tags (set->list TAGS)])
     (include-template "htdocs/templates/vocabulary-overview.html")))
 
-(define (render-vocabulary-page topic)
+(define (render-vocabulary-page a-tag)
   (let
-    ([vocabulary (get-vocabulary-by-tag topic)])
+    ([vocabulary (get-vocabulary-by-tag a-tag)])
     (render-base-page
-      #:content (render-vocabulary-table vocabulary topic)
+      #:content (render-vocabulary-table vocabulary)
       #:page-title "Vocabulary"
       #:special-css-imports (render-css-include "/css/vocabulary-table.css"))))
 
-(define (render-vocabulary-table vocabulary topic)
-  (let
-    ([topic topic]
-      [table-headers (list "German" "Pinyin" "Tones" "Chinese" "Description")]
-      [word-list vocabulary])
+(define (render-vocabulary-table vocabulary)
+  (let ([headings (list "German" "IPA" "Pinyin" "Chinese" "Description")]
+        [vocabulary vocabulary])
     (include-template "htdocs/templates/vocabulary-table.html")))

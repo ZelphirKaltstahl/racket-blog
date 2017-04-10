@@ -12,6 +12,6 @@
 (define (render-overview-page)
   (render-base-page
     #:content (let
-                ([subpage-titles (list "vocabulary" "homework")])
+                ([subpage-titles (list "tags" "vocabulary" "homework")])
                 (include-template "htdocs/templates/overview.html"))
     #:page-title "Overview"))
