@@ -2,6 +2,7 @@
 
 (require racket/set
          web-server/templates
+         "list-and-set-operations.rkt"
          "render-base.rkt"
          "response.rkt"
          "homework.rkt"
@@ -19,13 +20,17 @@
    (render-tags-overview-page)))
 
 (define (items-app request a-tag)
-  (send-success-response
-   (render-items-page-for-tag a-tag)))
+  (cond [(string=? a-tag "")
+         (send-success-response
+          (render-tags-overview-page))]
+        [else
+         (send-success-response
+          (render-items-page-for-tag a-tag))]))
 
 (define (render-tags-overview-page)
   (let ([tags
          (sort (unique-items-list (append (get-all-homework-tags #:reload true)
-                                          (get-all-vocabulary-tags #:reload true)))
+                                          (get-all-vocabulary-tags)))
                string<?)])
       (let ([content (include-template "htdocs/templates/tags-overview.html")])
         ;;(display content) (newline)

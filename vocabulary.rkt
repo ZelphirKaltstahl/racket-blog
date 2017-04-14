@@ -2,129 +2,108 @@
 
 (provide (all-defined-out))
 
-(require
-  racket/set
-  "tags.rkt")
+(require racket/set
+         racket/date
+         yaml
+         "date-procedures.rkt"
+         "list-and-set-operations.rkt")
 
-(define nil '())
-
-(struct complex-word (word
-                      metadata))
-(struct word (native-translations
-              native-phonetics
-              foreign-translations
-              foreign-phonetics))
-
+(define VOCABULARY empty)
 ;; =======
 ;; GETTERS
 ;; =======
-(define (get-all-vocabulary-tags #:reload [reload false])
-  (flatten (map get-tags VOCABULARY)))
+(define (reload-vocabulary!)
+  (set! VOCABULARY (read-vocabulary-from-directory "content/vocabulary/")))
 
-(define (get-tags a-complex-word)
-  (hash-ref (complex-word-metadata a-complex-word) 'tags (list)))
+(define (get-all-vocabulary #:reload [reload true])
+  (cond
+    [reload (read-vocabulary-from-directory "content/vocabulary/")]
+    [else VOCABULARY]))
 
-(define (get-description a-complex-word)
-  (hash-ref (complex-word-metadata a-complex-word) 'description ""))
+(define (get-all-vocabulary-tags)
+  (unique-items-list
+   (flatten
+    (map get-complex-word-tags
+         (get-all-vocabulary #:reload true)))))
+
+(define (get-all-homework-added-dates)
+  (unique-items-list
+    (map get-complex-word-added-date
+         (get-all-vocabulary #:reload true))))
+
+
+;; GET SUBSET BY ATTRIBUTE
+(define (complex-word-has-tag? a-complex-word a-tag)
+  (member a-tag (get-complex-word-tags a-complex-word)))
 
 (define (get-vocabulary-by-tag a-tag)
+  (filter (lambda (a-complex-word)
+            (complex-word-has-tag? a-complex-word a-tag))
+          (get-all-vocabulary #:reload true)))
+
+(define (get-vocabulary-by-date a-date)
+  (filter (lambda (a-complex-word)
+            (simple-date-equal? (get-complex-word-added-date a-complex-word) a-date))
+          (get-all-vocabulary #:reload true)))
+
+;; =================
+;; ATTRIBUTE GETTERS
+;; =================
+(define (get-attribute-from-complex-word a-hash . keys)
   (cond
-    [(set-member? TAGS a-tag)
-      (filter
-        (lambda (word) (member a-tag (get-tags word)))
-        VOCABULARY)]
-    [else nil]))
+    [(empty? keys) a-hash]
+    [else
+     (apply get-attribute-from-complex-word
+            (hash-ref a-hash (first keys))
+            (rest keys))]))
 
-;; =====
-;; STATE
-;; =====
-(define VOCABULARY
-  (list (complex-word (word '("der Blog")
-                            '("IPA")
-                            '("bókè")
-                            '("博客"))
-                      (hash 'description "phonetische Uebersetzung von \"Blog\""
-                            'tags (list (create-tag! "computer")
-                                        (create-tag! "IT"))))
+(define (get-complex-word-added-date complex-word)
+  (get-attribute-from-complex-word complex-word "metadata" "added-date"))
 
-        (complex-word (word '("die Webseite")
-                            '("IPA")
-                            '("wǎngzhàn")
-                            '("网站"))
-                      (hash 'description "ein Halt im Netzwerk :)"
-                            'tags (list (create-tag! "computer")
-                                        (create-tag! "IT"))))
+(define (get-complex-word-memorization-date complex-word)
+  (get-attribute-from-complex-word complex-word "metadata" "memorized-date"))
 
-        (complex-word (word '("die URL")
-                            '("IPA")
-                            '("wǎngzhàndìzhǐ")
-                            '("网站地址"))
-                      (hash 'description ""
-                            'tags (list (create-tag! "computer"))))
+(define (get-complex-word-author complex-word)
+  (get-attribute-from-complex-word complex-word "metadata" "author"))
 
-        (complex-word (word '("der Onlinekurs")
-                            '("IPA")
-                            '("wǎngkè")
-                            '("网课"))
-                      (hash 'description ""
-                            'tags (list (create-tag! "computer"))))
+(define (get-complex-word-description complex-word)
+  (get-attribute-from-complex-word complex-word "metadata" "description"))
 
-        (complex-word (word '("der Kurs")
-                            '("IPA")
-                            '("kèchéng")
-                            '("课程"))
-                      (hash 'description ""
-                            'tags (list (create-tag! "computer"))))
+(define (get-complex-word-tags complex-word)
+  (get-attribute-from-complex-word complex-word "metadata" "tags"))
 
-        (complex-word (word '("das Computerprogramm")
-                            '("IPA")
-                            '("chéngxù")
-                            '("程序"))
-                      (hash 'description ""
-                            'tags (list (create-tag! "computer"))))
+(define (get-complex-word-native-translation complex-word)
+  (get-attribute-from-complex-word complex-word "content" "native-translation"))
 
-        (complex-word (word '("Data Science")
-                            '("IPA")
-                            '("shùjùkēxué")
-                            '("数据科学"))
-                      (hash 'description ""
-                            'tags (list (create-tag! "computer"))))
+(define (get-complex-word-foreign-translation complex-word)
+  (get-attribute-from-complex-word complex-word "content" "foreign-translation"))
 
-        (complex-word (word '("Machine Learning")
-                            '("IPA")
-                            '("???")
-                            '("???"))
-                      (hash 'description ""
-                            'tags (list (create-tag! "computer"))))
+(define (get-complex-word-native-phonetics complex-word)
+  (get-attribute-from-complex-word complex-word "content" "native-phonetics"))
 
-        (complex-word (word '("Artificial Intelligence")
-                            '("IPA")
-                            '("???")
-                            '("???"))
-                      (hash 'description ""
-                            'tags (list (create-tag! "computer"))))
+(define (get-complex-word-foreign-phonetics complex-word)
+  (get-attribute-from-complex-word complex-word "content" "foreign-phonetics"))
 
-        (complex-word (word '("sich fuer eine Person entscheiden")
-                            '("IPA")
-                            '("xuǎnzé")
-                            '("选择"))
-                      (hash 'description ""
-                            'tags (list (create-tag! "politics"))))
+;; =================
+;; READING THE FILES
+;; =================
+(define (read-vocabulary-from-file path)
+  ;; a vocabulary file can contain more than one word
+  (file->yaml* path))
 
-        (complex-word (word '("teilnehmen")
-                            '("IPA")
-                            '("cānyù")
-                            '("参与"))
-                      (hash 'description (string-append "Im Gegensatz zu 参加 bedeutet 参与, dass man nur zu einem kleinen Teil teilnimmt. "
-                                                        "Zum Beispiel bei einer Wahl. "
-                                                        "Ein anderes Beispiel ist die Teilnahme an einem Musikkonzert."
-                                                        "我参与那个音乐会。 - Ich habe auf dem Musikkonzert der Musik zuehoert."
-                                                        "我参加那个音乐会。 - Ich habe auf dem Musikkonzert die Musik gespielt.")
-                            'tags (list (create-tag! "politics"))))
+(define (read-vocabulary-from-directory base-path-string)
+  (define (concat-with-base-path file-path)
+    (build-path base-path-string file-path))
 
-        (complex-word (word '("die Wahl")
-                            '("IPA")
-                            '("dàxuǎn")
-                            '("大选"))
-                      (hash 'description ""
-                            'tags (list (create-tag! "politics"))))))
+  (define (vocabulary-file? path)
+    ;; a vocabulary file must begin with vocabulary
+    ;; a vocabulary file must end with yaml
+    ;; for example vocabulary-university.yaml
+    (let ([file-name (path->string (file-name-from-path path))])
+      (and (string-prefix? file-name "vocabulary")
+           (string-suffix? file-name "yaml"))))
+
+  (let* ([filesystem-items (directory-list (string->path base-path-string))]
+         [files (filter file-exists? (map concat-with-base-path filesystem-items))])
+    (flatten (map read-vocabulary-from-file
+                  (filter vocabulary-file? files)))))

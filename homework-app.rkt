@@ -3,7 +3,9 @@
 (require web-server/templates
          "homework.rkt"
          "response.rkt"
-         "render-base.rkt")
+         "render-base.rkt"
+         "date-procedures.rkt"
+         "template-procedures.rkt")
 (provide (all-defined-out))
 
 
@@ -33,7 +35,9 @@
                     #:page-title (string-append "Homework")))
 
 (define (render-homeworks homeworks)
-  (string-join (map render-homework homeworks) ""))
+  (cond [(empty? homeworks) ""]
+        [else (string-append (render-heading "Homeworks" #:level 2)
+                             (string-join (map render-homework homeworks) ""))]))
 
 (define (render-homework homework)
   (let
