@@ -1,0 +1,3 @@
+.wrap h1 {
+    font-size: 1.4em;/*instead of 1.5em by webkit default*/
+}

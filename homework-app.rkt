@@ -32,7 +32,7 @@
 (define (render-homeworks-page homeworks)
   (render-base-page #:content (render-homeworks homeworks)
                     #:special-css-imports (render-css-include "/css/homework.css")
-                    #:page-title (string-append "Homework")))
+                    #:page-title "Homework"))
 
 (define (render-homeworks homeworks)
   (cond [(empty? homeworks) ""]

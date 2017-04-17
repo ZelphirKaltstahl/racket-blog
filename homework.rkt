@@ -4,7 +4,9 @@
 
 (require racket/set
          yaml
+         markdown
          "date-procedures.rkt"
+         "hash-procedures.rkt"
          "list-and-set-operations.rkt")
 
 (define HOMEWORK empty)
@@ -93,7 +95,32 @@
          (string-suffix? file-name "yaml"))))
 
 (define (read-homework-from-file path)
-  (file->yaml path))
+  ;; helper procedure
+  (define (update-hash-markdown-to-html yaml-hash)
+    (let* ([content-hash
+            (hash-ref yaml-hash "content")]
+           [text-hash
+            (my-hash-map (hash-ref content-hash "text")
+                         (lambda (key value)
+                           (cons key
+                                 (markdown-to-html value))))]
+           [corrected-text-hash
+            (my-hash-map (hash-ref content-hash "corrected-text")
+                         (lambda (key value)
+                           (cons key
+                                 (markdown-to-html value))))])
+      ;; update the yaml hash's "content"
+      (hash-set! content-hash
+                 "text"
+                 text-hash)
+      (hash-set! content-hash
+                 "corrected-text"
+                 corrected-text-hash)
+      (hash-set! yaml-hash
+                 "content"
+                 content-hash)
+      yaml-hash))
+  (update-hash-markdown-to-html (file->yaml path)))
 
 (define (read-homeworks-from-directory base-path-string)
   (define (concat-with-base-path file-path)
@@ -103,6 +130,18 @@
          [files (filter file-exists? (map concat-with-base-path filesystem-items))])
     (map read-homework-from-file
          (filter homework-file? files))))
+
+(define (markdown-to-html markdown-source)
+  (display (string-trim
+   (string-join
+    (map xexpr->string
+         (parse-markdown markdown-source))
+    "")))
+  (string-trim
+   (string-join
+    (map xexpr->string
+         (parse-markdown markdown-source))
+    "")))
 
 ;; =================================
 ;; FROM THE DOCUMENTATION OF RACKET:

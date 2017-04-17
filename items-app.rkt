@@ -2,6 +2,7 @@
 
 (require racket/set
          web-server/templates
+         "template-procedures.rkt"
          "list-and-set-operations.rkt"
          "render-base.rkt"
          "response.rkt"
@@ -38,8 +39,12 @@
                           #:page-title "Tags Overview"))))
 
 (define (render-items-page-for-tag a-tag)
-  (let ([homeworks-content (render-homeworks (get-homeworks-by-tag a-tag))]
-        [vocabulary-content (render-vocabulary-table (get-vocabulary-by-tag a-tag))])
+  (let ([homeworks-content
+         (wrap-rendered #:wrap-name "items-homeworks-container"
+                        (render-homeworks (get-homeworks-by-tag a-tag)))]
+        [vocabulary-content
+         (wrap-rendered #:wrap-name "items-vocabulary-container"
+                        (render-vocabulary-table (get-vocabulary-by-tag a-tag)))])
     (let ([content (include-template "htdocs/templates/items.html")]
           [special-css-imports (string-append (render-css-include "/css/homework.css")
                                               (render-css-include "/css/vocabulary-table.css"))])

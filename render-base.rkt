@@ -22,6 +22,9 @@
 
 (define (render-base-page #:content [content ""]
                           #:page-title [page-title "NO TITLE"]
+                          #:default-css-imports [default-css-imports
+                                                  (string-append (render-css-include "/css/wrap.css")
+                                                                 (render-css-include "/css/general.css"))]
                           #:special-css-imports [special-css-imports ""]
                           #:special-js-imports [special-js-imports ""]
                           #:header [header (include-template "htdocs/templates/header.html")]
