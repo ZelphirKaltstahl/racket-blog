@@ -36,7 +36,7 @@
 
 (define (render-homeworks homeworks)
   (cond [(empty? homeworks) ""]
-        [else (string-append (render-heading "Homeworks" #:level 2)
+        [else (string-append #;(render-heading "Homeworks" #:level 2)
                              (string-join (map render-homework homeworks) ""))]))
 
 (define (render-homework homework)

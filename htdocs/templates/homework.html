@@ -1,41 +1,11 @@
 <section class="homework-section">
-    <h1>Homework (@|(my-date->string (get-attribute-from-homework homework "metadata" "due-date"))|)</h1>
+    <h1 class="homework-level-1">Homework (@|(my-date->string (get-attribute-from-homework homework "metadata" "due-date"))|)</h1>
     <h2>Task</h2>
     <p class="homework-task-description">
         @|(hash-ref (hash-ref homework "metadata") "task-description" "no task description")|
     </p>
-    <h2 class="">Corrected Version</h2>
-    <h3 class="homework-corrected">Foreign Language Translation</h3>
-    <p class="homework-foreign-language-translation homework-corrected">
-        @|(get-foreign-translation-corrected homework)|
-    </p>
-    <h3 class="homework-corrected">Foreign Language Phonetics</h3>
-    <p class="homework-foreign-language-phonetics homework-corrected">
-        @|(get-foreign-phonetics-corrected homework)|
-    </p>
-    <h3 class="homework-corrected">Native Language Translation</h3>
-    <p class="homework-native-phonetics homework-corrected">
-        @|(get-native-phonetics-corrected homework)|
-    </p>
-    <h3 class="homework-corrected">Native Language Phonetics</h3>
-    <p class="homework-native-language-translation homework-corrected">
-        @|(get-native-translation-corrected homework)|
-    </p>
-    <h2 class="">Original Version</h2>
-    <h3 class="homework-original">Foreign Language Translation</h3>
-    <p class="homework-foreign-language-translation homework-original">
-        @|(get-foreign-translation homework)|
-    </p>
-    <h3 class="homework-original">Foreign Language Phonetics</h3>
-    <p class="homework-foreign-language-phonetics homework-original">
-        @|(get-foreign-phonetics homework)|
-    </p>
-    <h3 class="homework-original">Native Language Translation</h3>
-    <p class="homework-native-phonetics homework-original">
-        @|(get-native-phonetics homework)|
-    </p>
-    <h3 class="homework-original">Native Language Phonetics</h3>
-    <p class="homework-native-language-translation homework-original">
-        @|(get-native-translation homework)|
-    </p>
+    <h1 class="homework-level-1-heading">Corrected Version</h1>
+    @|(get-corrected-text-from-homework homework)|
+    <h1 class="homework-level-1-heading">Original Version</h1>
+    @|(get-text-from-homework homework)|
 </section>

@@ -62,29 +62,35 @@
 (define (get-tags-from-homework homework)
   (hash-ref (hash-ref homework "metadata") "tags" empty))
 
-(define (get-native-translation homework)
-  (get-attribute-from-homework homework "content" "text" "native-translation"))
+(define (get-text-from-homework homework)
+  (get-attribute-from-homework homework "content" "text"))
 
-(define (get-native-translation-corrected homework)
-  (get-attribute-from-homework homework "content" "corrected-text" "native-translation"))
+(define (get-corrected-text-from-homework homework)
+  (get-attribute-from-homework homework "content" "corrected-text"))
 
-(define (get-foreign-translation homework)
-  (get-attribute-from-homework homework "content" "text" "foreign-translation"))
+;; (define (get-native-translation homework)
+;;   (get-attribute-from-homework homework "content" "text" "native-translation"))
 
-(define (get-foreign-translation-corrected homework)
-  (get-attribute-from-homework homework "content" "corrected-text" "foreign-translation"))
+;; (define (get-native-translation-corrected homework)
+;;   (get-attribute-from-homework homework "content" "corrected-text" "native-translation"))
 
-(define (get-native-phonetics homework)
-  (get-attribute-from-homework homework "content" "text" "native-phonetics"))
+;; (define (get-foreign-translation homework)
+;;   (get-attribute-from-homework homework "content" "text" "foreign-translation"))
 
-(define (get-native-phonetics-corrected homework)
-  (get-attribute-from-homework homework "content" "corrected-text" "native-phonetics"))
+;; (define (get-foreign-translation-corrected homework)
+;;   (get-attribute-from-homework homework "content" "corrected-text" "foreign-translation"))
 
-(define (get-foreign-phonetics homework)
-  (get-attribute-from-homework homework "content" "text" "foreign-phonetics"))
+;; (define (get-native-phonetics homework)
+;;   (get-attribute-from-homework homework "content" "text" "native-phonetics"))
 
-(define (get-foreign-phonetics-corrected homework)
-  (get-attribute-from-homework homework "content" "corrected-text" "foreign-phonetics"))
+;; (define (get-native-phonetics-corrected homework)
+;;   (get-attribute-from-homework homework "content" "corrected-text" "native-phonetics"))
+
+;; (define (get-foreign-phonetics homework)
+;;   (get-attribute-from-homework homework "content" "text" "foreign-phonetics"))
+
+;; (define (get-foreign-phonetics-corrected homework)
+;;   (get-attribute-from-homework homework "content" "corrected-text" "foreign-phonetics"))
 
 ;; =================
 ;; READING THE FILES
@@ -97,29 +103,25 @@
 (define (read-homework-from-file path)
   ;; helper procedure
   (define (update-hash-markdown-to-html yaml-hash)
-    (let* ([content-hash
-            (hash-ref yaml-hash "content")]
-           [text-hash
-            (my-hash-map (hash-ref content-hash "text")
-                         (lambda (key value)
-                           (cons key
-                                 (markdown-to-html value))))]
-           [corrected-text-hash
-            (my-hash-map (hash-ref content-hash "corrected-text")
-                         (lambda (key value)
-                           (cons key
-                                 (markdown-to-html value))))])
-      ;; update the yaml hash's "content"
+    (let* ([content-hash (hash-ref yaml-hash "content")])
       (hash-set! content-hash
                  "text"
-                 text-hash)
+                 (markdown-to-html (hash-ref content-hash "text")))
       (hash-set! content-hash
                  "corrected-text"
-                 corrected-text-hash)
+                 (markdown-to-html (hash-ref content-hash "corrected-text")))
       (hash-set! yaml-hash
                  "content"
                  content-hash)
-      yaml-hash))
+      yaml-hash
+      #;(hash-set yaml-hash
+                "content"
+                (make-immutable-hash
+                 (hash->list
+                  (my-hash-map content-hash
+                               (lambda (key value)
+                                 (cons key
+                                       (markdown-to-html value)))))))))
   (update-hash-markdown-to-html (file->yaml path)))
 
 (define (read-homeworks-from-directory base-path-string)

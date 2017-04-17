@@ -2,9 +2,9 @@ p.homework-task-description {
     font-style: italic;
 }
 
-span.homework-in-text-heading-1 {
-    font-weight: bold;
-    font-size: 1.4em;
+h1.homework-level-1-heading {
+    font-size: 2em;
+    text-decoration: underline;
 }
 
 .homework-original {

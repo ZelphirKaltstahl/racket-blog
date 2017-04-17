@@ -10,60 +10,49 @@ metadata:
     - essay
     - article
 content:
-  text:
-    native-translation: |-
-      TODO
-    native-phonetics: |-
-      IPA
-    foreign-phonetics: |-
-      Zhège wénzhāng shì duìyú bìyèdàxué zhīhòu yīnggāi mǎshàng zhǎo gōngzuò huòzhě yīnggāi zuò zìjǐ xǐhuan de shìqing.
-      Duìyú wǒ láishuō rúguǒ nǐ yǒu zúgòude qián, nǐ jiù yīnggāi zuò zìjǐ xǐhuan de shìqing.
-      Yuányīn shì kěnéng rúguǒ nǐ zhǎodào gōngzuò, nǐ jiù méiyǒu shíjiān zuò zìjǐ xǐhuan de shìqing.
-      Biéde yōudiǎn shì kěnéng nǐ yǒu xīnde jīngyàn, ránhòu xiǎng zuò biéde gōngzuò.
-      Rúguǒ nǐ bù zuò zìjǐ xǐhuan de shìqing, nǐ jiù bù néng yǒu zhè ge jīngyàn.
-      Ràng wǒmen shuō nǐ xiǎng lǚyóu.
-      Yīnwèi nǐ yǒu gōngzuò, suǒyǐ nǐ bù kěyǐ qù wàiguó yī ge yuè.
-      Rúguǒ nǐ méiyǒu zúgòude qián, nǐ jiù bù néng zhèyàng lǚyóu.
-      Nǐ lǚyóu zhīqián bìxū gōngzuò hé zhuànqián.
-      Rúguǒ nǐ xǐhuan zuò de shìqing bùyòng qián, nǐ háiyǒu shèhuì hé fùmǔ de yā.
-      Kěnéng tāmen gàosu nǐ nǐ yīnggāi gōngzuò.
-    foreign-translation: |-
-      这个文章是对于毕业大学之后应该马上找工作或者应该做自己喜欢的事情。
-      对于我来说 如果你有足够的钱，你就应该做自己喜欢的事情。
-      原因是可能如果你找到工作，你就没有时间做自己喜欢的事情。
-      别的优点(yōudiǎn - advantage, merit)是可能你有新的经验，然后想做别的工作。
-      如果你不做自己喜欢的事情，你就不能有这(how to say "this kind of experience?")个经验(jīngyàn - experience, to experience)。
-      让我们说你想旅游。
-      因为你有工作，所以你不可以去外国一个月。
-      如果你没有足够的钱，你就不能这样旅游。
-      你旅游之前必须工作和赚钱 (zhuànqián - earn money)。
-      如果你喜欢做的事情不用钱，你还有社会和父母的压。
-      可能他们告诉你你应该工作。
-    foreign-translation-markdown: >
-      # test
-      test
-      ## test2
-      test2
-  corrected-text:
-    native-translation: |-
-      TODO
-    native-phonetics: |-
-      TODO
-    foreign-phonetics: |-
-      TODO
-    foreign-translation: |-
-      这个文章是关于在(here you should use 在)大学毕业(dàxuébìyè - graduating from university)之后应该马上找工作还是(háishì - ob, does not have to be a question)应该做自己喜欢的事情。
-      对于我来说 如果你有足够的钱，你就应该做自己喜欢的事情。
-      原因是可能如果你找到工作，你就没有时间做自己喜欢的事情。
-      别的好处(yōudiǎn - advantage, merit)是可能你有新的经验，然后想做别的工作。
-      如果你不做自己喜欢的事情，你就不能有这种(zhèzhǒng - this kind of, this style of)经验(jīngyàn - experience, to experience)。
-      比如(for example)你想旅游。
-      如果你有工作，你就不可以去外国旅游一整个月(a whole month)。
-      如果你没有足够的钱，你就不能这样旅游。
-      在这种情况下(in this kind of situation)你旅游之前必须工作和赚钱 (zhuànqián - earn money)。
-      即使(even though, although)你喜欢做的事情不用钱，也(ye3 - other part of a 即使 phrase)还有来自(lai2zi4 - coming from)社会(shehui - society)和父母的压力(yali - pressure)。
-      可能他们告诉你你应该工作。
-  explanation:
+  text: |-
+    # Foreign Phonetics
+
+    Zhège wénzhāng shì duìyú bìyèdàxué zhīhòu yīnggāi mǎshàng zhǎo gōngzuò huòzhě yīnggāi zuò zìjǐ xǐhuan de shìqing.
+    Duìyú wǒ láishuō rúguǒ nǐ yǒu zúgòude qián, nǐ jiù yīnggāi zuò zìjǐ xǐhuan de shìqing.
+    Yuányīn shì kěnéng rúguǒ nǐ zhǎodào gōngzuò, nǐ jiù méiyǒu shíjiān zuò zìjǐ xǐhuan de shìqing.
+    Biéde yōudiǎn shì kěnéng nǐ yǒu xīnde jīngyàn, ránhòu xiǎng zuò biéde gōngzuò.
+    Rúguǒ nǐ bù zuò zìjǐ xǐhuan de shìqing, nǐ jiù bù néng yǒu zhè ge jīngyàn.
+    Ràng wǒmen shuō nǐ xiǎng lǚyóu.
+    Yīnwèi nǐ yǒu gōngzuò, suǒyǐ nǐ bù kěyǐ qù wàiguó yī ge yuè.
+    Rúguǒ nǐ méiyǒu zúgòude qián, nǐ jiù bù néng zhèyàng lǚyóu.
+    Nǐ lǚyóu zhīqián bìxū gōngzuò hé zhuànqián.
+    Rúguǒ nǐ xǐhuan zuò de shìqing bùyòng qián, nǐ háiyǒu shèhuì hé fùmǔ de yā.
+    Kěnéng tāmen gàosu nǐ nǐ yīnggāi gōngzuò.
+
+    # Foreign Translation
+
+    这个文章是对于毕业大学之后应该马上找工作或者应该做自己喜欢的事情。
+    对于我来说 如果你有足够的钱，你就应该做自己喜欢的事情。
+    原因是可能如果你找到工作，你就没有时间做自己喜欢的事情。
+    别的优点(yōudiǎn - advantage, merit)是可能你有新的经验，然后想做别的工作。
+    如果你不做自己喜欢的事情，你就不能有这(how to say "this kind of experience?")个经验(jīngyàn - experience, to experience)。
+    让我们说你想旅游。
+    因为你有工作，所以你不可以去外国一个月。
+    如果你没有足够的钱，你就不能这样旅游。
+    你旅游之前必须工作和赚钱 (zhuànqián - earn money)。
+    如果你喜欢做的事情不用钱，你还有社会和父母的压。
+    可能他们告诉你你应该工作。
+
+  corrected-text: |-
+    # Foreign Translation
+
+    这个文章是关于在(here you should use 在)大学毕业(dàxuébìyè - graduating from university)之后应该马上找工作还是(háishì - ob, does not have to be a question)应该做自己喜欢的事情。
+    对于我来说 如果你有足够的钱，你就应该做自己喜欢的事情。
+    原因是可能如果你找到工作，你就没有时间做自己喜欢的事情。
+    别的好处(yōudiǎn - advantage, merit)是可能你有新的经验，然后想做别的工作。
+    如果你不做自己喜欢的事情，你就不能有这种(zhèzhǒng - this kind of, this style of)经验(jīngyàn - experience, to experience)。
+    比如(for example)你想旅游。
+    如果你有工作，你就不可以去外国旅游一整个月(a whole month)。
+    如果你没有足够的钱，你就不能这样旅游。
+    在这种情况下(in this kind of situation)你旅游之前必须工作和赚钱 (zhuànqián - earn money)。
+    即使(even though, although)你喜欢做的事情不用钱，也(ye3 - other part of a 即使 phrase)还有来自(lai2zi4 - coming from)社会(shehui - society)和父母的压力(yali - pressure)。
+    可能他们告诉你你应该工作。
 
 ...
 # youdian - benefit only to the thing itself (in the context)
